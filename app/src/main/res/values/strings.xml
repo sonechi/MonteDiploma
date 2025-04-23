@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">Метод Монте-Карло</string>
+
+    <!-- MainActivity strings -->
+    <string name="welcome_title">Добро пожаловать!</string>
+    <string name="welcome_subtitle">Приложение для вычисления площадей методом Монте-Карло. С помощью этого метода можно вычислить площадь сложных фигур, используя случайные точки.</string>
+    <string name="start_button">Начать расчёт</string>
+
+    <!-- CalculatorActivity strings -->
+    <string name="calculator_title">Расчёт площади методом Монте-Карло</string>
+    <string name="shape_label">Фигура:</string>
+    <string name="radius_label">Радиус:</string>
+    <string name="width_label">Ширина:</string>
+    <string name="height_label">Высота:</string>
+    <string name="base_label">Основание:</string>
+    <string name="side_label">Сторона:</string>
+    <string name="semi_major_label">Большая полуось:</string>
+    <string name="semi_minor_label">Малая полуось:</string>
+    <string name="enter_value">Введите значение</string>
+    <string name="points_label">Количество точек:</string>
+    <string name="calculate_button">Рассчитать</string>
+    <string name="reset_button">Сбросить</string>
+    <string name="result_initial">Здесь будет отображён результат</string>
+    <string name="result_area">Площадь: %.4f</string>
+    <string name="calculations_title">Вычисления:</string>
+    <string name="points_inside">Точек внутри фигуры: %d</string>
+    <string name="points_total">Всего точек: %d</string>
+    <string name="ratio">Отношение: %.4f</string>
+    <string name="bounding_area">Площадь ограничивающей области: %.4f</string>
+    <string name="visualization_label">Визуализация метода Монте-Карло</string>
+    <string name="invalid_input_message">Пожалуйста, введите корректные значения</string>
+    <string name="positive_values_message">Значения должны быть положительными</string>
+
+    <!-- Arrays -->
+    <string-array name="shapes_array">
+        <item>Круг</item>
+        <item>Прямоугольник</item>
+        <item>Треугольник</item>
+        <item>Квадрат</item>
+        <item>Эллипс</item>
+        <item>Правильный шестиугольник</item>
+    </string-array>
+
+    <string-array name="points_count_array">
+        <item>1 000 точек</item>
+        <item>5 000 точек</item>
+        <item>10 000 точек</item>
+        <item>50 000 точек</item>
+        <item>100 000 точек</item>
+        <item>1 000 000 точек</item>
+    </string-array>
+</resources>
