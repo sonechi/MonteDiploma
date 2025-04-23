@@ -1,5 +1,6 @@
 package com.example.montediploma
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -25,8 +26,11 @@ class CalculatorActivity : AppCompatActivity() {
     private lateinit var pointsTotalText: TextView
     private lateinit var ratioText: TextView
     private lateinit var boundingAreaText: TextView
+    private lateinit var exactAreaText: TextView
+    private lateinit var errorText: TextView
     private lateinit var visualizationView: MonteCarloVisualizationView
     private lateinit var numberPointsSpinner: Spinner
+    private lateinit var analysisButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +52,11 @@ class CalculatorActivity : AppCompatActivity() {
         pointsTotalText = findViewById(R.id.pointsTotalText)
         ratioText = findViewById(R.id.ratioText)
         boundingAreaText = findViewById(R.id.boundingAreaText)
+        exactAreaText = findViewById(R.id.exactAreaText)
+        errorText = findViewById(R.id.errorText)
         visualizationView = findViewById(R.id.visualizationView)
         numberPointsSpinner = findViewById(R.id.numberPointsSpinner)
+        analysisButton = findViewById(R.id.analysisButton)
 
         // Настройка выпадающего списка для выбора фигуры
         ArrayAdapter.createFromResource(
@@ -90,6 +97,39 @@ class CalculatorActivity : AppCompatActivity() {
         // Обработчик кнопки сброса
         resetButton.setOnClickListener {
             resetCalculations()
+        }
+
+        // Обработчик кнопки анализа точности
+        analysisButton.setOnClickListener {
+            if (parameter1Input.text.toString().isEmpty()) {
+                Toast.makeText(this, R.string.invalid_input_message, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            try {
+                val shapeType = spinner.selectedItemPosition
+                val param1 = parameter1Input.text.toString().toDouble()
+                var param2 = 0.0
+
+                if (inputLayout2.visibility == View.VISIBLE && parameter2Input.text.toString().isNotEmpty()) {
+                    param2 = parameter2Input.text.toString().toDouble()
+                }
+
+                if (param1 <= 0 || (inputLayout2.visibility == View.VISIBLE && param2 <= 0)) {
+                    Toast.makeText(this, R.string.positive_values_message, Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val intent = Intent(this, PrecisionAnalysisActivity::class.java).apply {
+                    putExtra("shapeType", shapeType)
+                    putExtra("param1", param1)
+                    putExtra("param2", param2)
+                }
+                startActivity(intent)
+
+            } catch (e: NumberFormatException) {
+                Toast.makeText(this, R.string.invalid_input_message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -176,9 +216,14 @@ class CalculatorActivity : AppCompatActivity() {
             pointsTotalText.text = getString(R.string.points_total, result.totalPoints)
             ratioText.text = getString(R.string.ratio, result.ratio)
             boundingAreaText.text = getString(R.string.bounding_area, result.boundingArea)
+            exactAreaText.text = getString(R.string.exact_area, result.exactArea)
+            errorText.text = getString(R.string.error_percentage, result.errorPercentage)
 
             // Обновляем визуализацию
             updateVisualization(shapePosition, param1, param2)
+
+            // Показываем кнопку анализа точности
+            analysisButton.visibility = View.VISIBLE
 
         } catch (e: NumberFormatException) {
             Toast.makeText(this, R.string.invalid_input_message, Toast.LENGTH_SHORT).show()
@@ -193,6 +238,7 @@ class CalculatorActivity : AppCompatActivity() {
         // Сбрасываем результаты
         resultText.text = getString(R.string.result_initial)
         calculationsCard.visibility = View.GONE
+        analysisButton.visibility = View.GONE
 
         // Сбрасываем визуализацию
         visualizationView.reset()
@@ -203,7 +249,9 @@ class CalculatorActivity : AppCompatActivity() {
         val totalPoints: Int,
         val pointsInside: Int,
         val boundingArea: Double,
-        val ratio: Double = pointsInside.toDouble() / totalPoints
+        val ratio: Double = pointsInside.toDouble() / totalPoints,
+        val exactArea: Double = 0.0,
+        val errorPercentage: Double = if (exactArea > 0) abs((area - exactArea) / exactArea * 100) else 0.0
     )
 
     private fun calculateCircleArea(radius: Double, numberOfPoints: Int): MonteCarloResult {
@@ -222,8 +270,9 @@ class CalculatorActivity : AppCompatActivity() {
 
         val ratio = pointsInside.toDouble() / numberOfPoints
         val area = ratio * boundingArea
+        val exactArea = AnalyticalFormulas.getCircleArea(radius)
 
-        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio)
+        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio, exactArea)
     }
 
     private fun calculateRectangleArea(width: Double, height: Double, numberOfPoints: Int): MonteCarloResult {
@@ -232,8 +281,9 @@ class CalculatorActivity : AppCompatActivity() {
         val boundingArea = width * height
         val ratio = 1.0
         val area = width * height
+        val exactArea = AnalyticalFormulas.getRectangleArea(width, height)
 
-        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio)
+        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio, exactArea)
     }
 
     private fun calculateTriangleArea(base: Double, height: Double, numberOfPoints: Int): MonteCarloResult {
@@ -252,8 +302,9 @@ class CalculatorActivity : AppCompatActivity() {
 
         val ratio = pointsInside.toDouble() / numberOfPoints
         val area = ratio * boundingArea
+        val exactArea = AnalyticalFormulas.getTriangleArea(base, height)
 
-        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio)
+        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio, exactArea)
     }
 
     private fun calculateSquareArea(side: Double, numberOfPoints: Int): MonteCarloResult {
@@ -262,8 +313,9 @@ class CalculatorActivity : AppCompatActivity() {
         val boundingArea = side * side
         val ratio = 1.0
         val area = side * side
+        val exactArea = AnalyticalFormulas.getSquareArea(side)
 
-        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio)
+        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio, exactArea)
     }
 
     private fun calculateEllipseArea(semiMajor: Double, semiMinor: Double, numberOfPoints: Int): MonteCarloResult {
@@ -282,8 +334,9 @@ class CalculatorActivity : AppCompatActivity() {
 
         val ratio = pointsInside.toDouble() / numberOfPoints
         val area = ratio * boundingArea
+        val exactArea = AnalyticalFormulas.getEllipseArea(semiMajor, semiMinor)
 
-        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio)
+        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio, exactArea)
     }
 
     private fun calculateHexagonArea(side: Double, numberOfPoints: Int): MonteCarloResult {
@@ -313,8 +366,9 @@ class CalculatorActivity : AppCompatActivity() {
 
         val ratio = pointsInside.toDouble() / numberOfPoints
         val area = ratio * boundingArea
+        val exactArea = AnalyticalFormulas.getHexagonArea(side)
 
-        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio)
+        return MonteCarloResult(area, numberOfPoints, pointsInside, boundingArea, ratio, exactArea)
     }
 
     private fun isInsideHexagon(x: Double, y: Double, centerX: Double, centerY: Double, side: Double): Boolean {

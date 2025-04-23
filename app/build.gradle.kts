@@ -60,4 +60,5 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.appcompat)
     implementation(libs.itextpdf)
+    implementation(libs.mpandroidchart)
 }

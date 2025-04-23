@@ -10,6 +10,7 @@ activityCompose = "1.10.1"
 composeBom = "2024.09.00"
 
 [libraries]
+mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version = "v3.1.0" }
 itextpdf = { group = "com.itextpdf", name = "itextg", version = "5.5.10" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.4.1" }
 material = { group = "com.google.android.material", name = "material", version = "1.5.0" }

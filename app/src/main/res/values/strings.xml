@@ -1,5 +1,16 @@
 <resources>
     <string name="app_name">Метод Монте-Карло</string>
+    <!-- Новые строки для анализа точности -->
+    <string name="accuracy_title">Анализ точности:</string>
+    <string name="exact_area">Точное значение площади: %.4f</string>
+    <string name="error_percentage">Погрешность: %.2f%%</string>
+    <string name="analyze_precision">Подробный анализ точности метода</string>
+    <string name="precision_analysis">Анализ точности метода Монте-Карло</string>
+    <string name="precision_analysis_title">Анализ точности для фигуры: %1$s</string>
+    <string name="loading_analysis">Выполняется анализ, пожалуйста, подождите...</string>
+    <string name="export_pdf">Экспорт результатов в PDF</string>
+    <string name="error_chart_label">Погрешность, %</string>
+    <string name="analysis_description">Для %1$s с точной площадью %2$.4f:\n\nНаименьшая погрешность достигается при %3$d точках: %4$.4f%%\n\nНаибольшая погрешность при %5$d точках: %6$.4f%%\n\nЧем больше точек используется для метода Монте-Карло, тем выше точность расчетов. Погрешность обычно уменьшается пропорционально 1/√n, где n - количество точек.</string>
 
     <!-- MainActivity strings -->
     <string name="welcome_title">Добро пожаловать!</string>
